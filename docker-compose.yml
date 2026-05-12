@@ -1,0 +1,64 @@
+services:
+  # Express API service with static frontend pages.
+  app:
+    build: .
+    container_name: cloudlab_app
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    command: npm start
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:5000/status > /dev/null || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 25s
+
+  # PostgreSQL data layer.
+  postgres:
+    image: postgres:16-alpine
+    container_name: cloudlab_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: cloudlabdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d cloudlabdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+
+  # RabbitMQ broker with management dashboard.
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: cloudlab_rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 8
+
+volumes:
+  pgdata:
+  rabbitmq_data:

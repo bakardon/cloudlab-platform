@@ -1,0 +1,30 @@
+{
+  "name": "u2022039_cloudlab",
+  "version": "1.0.0",
+  "description": "Lightweight cloud backend for CE408L lab exam",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": [
+    "cloud",
+    "express",
+    "postgres",
+    "rabbitmq",
+    "jwt"
+  ],
+  "author": "u2022039",
+  "license": "ISC",
+  "dependencies": {
+    "amqplib": "^0.10.9",
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
