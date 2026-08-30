@@ -1,98 +1,92 @@
-# u2022039 CloudLab Platform
+# CloudLab Platform
 
-![Node.js](https://img.shields.io/badge/Node.js-20.x-3c873a) ![Express](https://img.shields.io/badge/Express-5.x-black) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791) ![RabbitMQ](https://img.shields.io/badge/RabbitMQ-3--management-ff6600) ![Docker](https://img.shields.io/badge/Docker-Compose-2496ed) ![JWT](https://img.shields.io/badge/Auth-JWT-8a2be2)
+**Cloud-oriented event-driven backend platform with authentication, asynchronous messaging, and containerized deployment.**
 
-Cloud-native university project upgraded for A-grade final submission, viva demo, and portfolio presentation.
+CloudLab is a full-stack backend project built around a Node.js/Express API, PostgreSQL persistence, RabbitMQ messaging, JWT authentication, and Docker Compose. It demonstrates how an application can separate synchronous API requests from asynchronous event processing while retaining operational visibility.
 
-## Features
-- JWT-based authentication with bcrypt password hashing
-- Event creation and retrieval APIs
-- Async event publishing to RabbitMQ queue (`eventQueue`)
-- Background consumer with JSON event log (`logs/events.json`)
-- Live system monitor page (`/monitor.html`)
-- Professional frontend dashboard (responsive + animated)
-- Docker Compose stack with healthchecks and restart policies
-- AWS deployment support (ECR + ECS templates)
+## Highlights
 
-## Architecture Diagram
+- JWT authentication with bcrypt password hashing
+- REST APIs for user authentication and event management
+- Asynchronous event publishing through RabbitMQ
+- Background event consumer with structured JSON logging
+- Health/status endpoint for backend, database, and message-broker visibility
+- Responsive browser dashboard
+- Docker Compose environment with health checks and restart policies
+- AWS-oriented ECR/ECS deployment templates
+
+## Architecture
+
 ```mermaid
 flowchart LR
-  U[Frontend UI] --> A[Express API]
-  A --> P[(PostgreSQL)]
-  A --> R[(RabbitMQ eventQueue)]
-  R --> C[Consumer Service]
-  C --> L[logs/events.json]
+  UI[Web Dashboard] --> API[Node.js / Express API]
+  API --> DB[(PostgreSQL)]
+  API --> MQ[RabbitMQ]
+  MQ --> C[Background Consumer]
+  C --> LOG[Event Log]
+  API --> AUTH[JWT + bcrypt]
 ```
 
-## Docker Architecture
-```mermaid
-flowchart TD
-  APP[cloudlab_app]
-  DB[cloudlab_postgres]
-  MQ[cloudlab_rabbitmq]
-  APP --> DB
-  APP --> MQ
-  MQ --> APP
-```
+## Why RabbitMQ?
+
+Event creation does not need to perform every downstream operation synchronously. The API publishes an event to RabbitMQ, allowing the consumer to process it independently. This creates an asynchronous boundary and demonstrates a pattern used in larger distributed systems.
+
+## API Surface
+
+| Endpoint | Purpose |
+|---|---|
+| `GET /` | Serve the application landing page |
+| `GET /status` | Report backend/database/RabbitMQ status |
+| `POST /register` | Create a user account |
+| `POST /login` | Authenticate and return a JWT |
+| `POST /events` | Create an event and publish a queue message |
+| `GET /events` | Retrieve events |
+
+## Technology Stack
+
+**Backend:** Node.js, Express  
+**Database:** PostgreSQL 16  
+**Messaging:** RabbitMQ  
+**Authentication:** JWT, bcrypt  
+**Infrastructure:** Docker, Docker Compose  
+**Cloud:** AWS ECR/ECS deployment templates  
+**Frontend:** HTML/CSS/JavaScript dashboard
 
 ## Project Structure
+
 ```text
-u2022039_cloudlab/
-├── config/              # DB and RabbitMQ config
+.
+├── config/              # PostgreSQL and RabbitMQ configuration
 ├── controllers/         # API business logic
-├── middleware/          # auth, logging, validation, async wrapper
-├── routes/              # auth/events/status routes
-├── services/            # publisher + consumer
-├── public/              # frontend pages and assets
-├── logs/                # consumed event logs
-├── aws/                 # ECR/ECS deployment files
-├── submission/          # final report material
+├── middleware/          # Authentication, logging, validation
+├── routes/              # API route definitions
+├── services/            # Publisher and consumer services
+├── public/              # Frontend pages and assets
+├── logs/                # Consumed event logs
+├── aws/                 # ECR/ECS deployment material
+├── submission/          # Project documentation
 ├── docker-compose.yml
 ├── Dockerfile
 ├── server.js
 └── README.md
 ```
 
-## API Documentation (Quick)
-- `GET /` -> Landing page
-- `GET /status` -> Backend/DB/RabbitMQ status
-- `POST /register` -> Register user
-- `POST /login` -> Login user and return JWT
-- `POST /events` -> Create event and publish queue message (JWT required)
-- `GET /events` -> List all events
+## Run Locally
 
-## Run Locally (Windows + Cursor + Docker Desktop)
 ```bash
 docker compose up --build
 ```
 
-Open:
-- Frontend: [http://localhost:5000](http://localhost:5000)
-- RabbitMQ dashboard: [http://localhost:15672](http://localhost:15672) (`guest` / `guest`)
+Then open `http://localhost:5000`.
 
-## Screenshots Section
-Add final screenshots to `submission/screenshots/`:
-- Project structure
-- Running containers
-- Dashboard
-- API monitor
-- Register/login success
-- Event creation and list
-- RabbitMQ dashboard
-- `logs/events.json`
+## Operational Design
+
+The server initializes PostgreSQL and RabbitMQ with retry handling to tolerate dependency startup races in a containerized environment. A status endpoint provides basic operational diagnostics, while the asynchronous consumer keeps event processing separate from the request path.
 
 ## AWS Deployment
-- ECR push script: `aws/deploy-ecr.ps1`
-- ECS task template: `aws/ecs-task-definition-template.json`
-- ECS commands: `aws/deploy-ecs-commands.md`
 
-## Viva Highlights
-- Why RabbitMQ? Decouples API writes from async event processing
-- Why JWT? Stateless auth for scalable microservice-style APIs
-- Why Docker Compose? Deterministic local cloud-like environment
-- Why `/status`? Operational visibility and health diagnostics
+The `aws/` directory contains material for an AWS deployment using Amazon ECR and ECS. These files are retained as deployment examples rather than representing a live hosted service.
 
-## Troubleshooting
-- If app starts before dependencies, retries in `server.js` handle it.
-- If PowerShell blocks npm scripts, use Docker flow instead.
-- If RabbitMQ dashboard not opening, ensure container is healthy and port `15672` is free.
+## Project Context
+
+Originally developed as a university cloud-computing project and extended into a portfolio demonstration of backend architecture, asynchronous messaging, authentication, containerization, and cloud deployment concepts.
