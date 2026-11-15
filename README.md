@@ -4,6 +4,8 @@
 
 CloudLab is a full-stack backend project built around a Node.js/Express API, PostgreSQL persistence, RabbitMQ messaging, JWT authentication, and Docker Compose. It demonstrates how an application can separate synchronous API requests from asynchronous event processing while retaining operational visibility.
 
+![CloudLab landing page](docs/screenshots/landing.png)
+
 ## Highlights
 
 - JWT authentication with bcrypt password hashing
@@ -26,6 +28,18 @@ flowchart LR
   C --> LOG[Event Log]
   API --> AUTH[JWT + bcrypt]
 ```
+
+## Screenshots
+
+| API monitor | Event list |
+|---|---|
+| ![API monitor](docs/screenshots/api-monitor.png) | ![Event list](docs/screenshots/event-list.png) |
+
+| Docker Compose startup | Consumed event log |
+|---|---|
+| ![Docker Compose startup](docs/screenshots/docker-compose-up.png) | ![Consumer event log](docs/screenshots/consumer-event-log.png) |
+
+More in [`docs/screenshots/`](docs/screenshots/).
 
 ## Why RabbitMQ?
 
@@ -64,7 +78,7 @@ Event creation does not need to perform every downstream operation synchronously
 ├── public/              # Frontend pages and assets
 ├── logs/                # Consumed event logs
 ├── aws/                 # ECR/ECS deployment material
-├── submission/          # Project documentation
+├── docs/screenshots/    # Application screenshots
 ├── docker-compose.yml
 ├── Dockerfile
 ├── server.js
@@ -74,6 +88,7 @@ Event creation does not need to perform every downstream operation synchronously
 ## Run Locally
 
 ```bash
+cp .env.example .env
 docker compose up --build
 ```
 
@@ -90,3 +105,7 @@ The `aws/` directory contains material for an AWS deployment using Amazon ECR an
 ## Project Context
 
 Originally developed as a university cloud-computing project and extended into a portfolio demonstration of backend architecture, asynchronous messaging, authentication, containerization, and cloud deployment concepts.
+
+## License
+
+MIT. See [LICENSE](LICENSE).

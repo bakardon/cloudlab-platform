@@ -1,7 +1,7 @@
 {
-  "name": "u2022039_cloudlab",
+  "name": "cloudlab-platform",
   "version": "1.0.0",
-  "description": "Lightweight cloud backend for CE408L lab exam",
+  "description": "Event-driven Node.js backend with JWT auth, PostgreSQL, RabbitMQ and Docker Compose",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -14,8 +14,8 @@
     "rabbitmq",
     "jwt"
   ],
-  "author": "u2022039",
-  "license": "ISC",
+  "author": "Abubakar Mazhar",
+  "license": "MIT",
   "dependencies": {
     "amqplib": "^0.10.9",
     "bcrypt": "^6.0.0",
